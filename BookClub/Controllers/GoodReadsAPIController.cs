@@ -27,17 +27,6 @@ namespace BookClub.Controllers
             // Get a book by specified id.
             var book = await client.Books.GetByIsbn(ISBN);
 
-
-            //var serializer = new XmlSerializer(typeof(ApiResponse));
-
-            //ApiResponse result;
-
-            //using (TextReader reader = new StringReader(response.Content))
-            //{
-            //    result
-            //}
-
-
             return Ok();
         }
     }

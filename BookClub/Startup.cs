@@ -48,6 +48,8 @@ namespace BookClub
                 app.UseHsts();
             }
 
+            app.UseCors("MyPolicy");
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

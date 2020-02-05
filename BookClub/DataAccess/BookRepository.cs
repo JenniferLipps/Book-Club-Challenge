@@ -20,7 +20,7 @@ namespace BookClub.DataAccess
                 db.Open();
                 var sql = @"select *
                             from [Book]
-                            where Id = @UserId";
+                            where UserId = @UserId";
                 var parameters = new
                 {
                     UserId = userId

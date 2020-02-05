@@ -57,15 +57,37 @@ namespace BookClub.DataAccess
 
                 db.Execute(sql, parameters);
             }
+        }
 
+        internal void AddUserToExistingChallenge(int challengeId, int userId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sql = @"insert into [dbo].[UserChallenge]
+                            ([ChallengeId]
+                            ,[UserId])
+                            values
+                            (@challengeId
+                            ,@userId)";
 
+                var parameters = new
+                {
+                    ChallengeId = challengeId,
+                    UserId = userId
+                };
+
+                db.Execute(sql, parameters);
+            }
         }
 
         public IEnumerable<Challenge> GetChallengesByUser(int userId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sql = @"select * from [UserChallenge] where UserId = @userid";
+                var sql = @"select c.Id, c.StartDate, c.EndDate
+                            from Challenge c
+                            join UserChallenge uc on c.Id = uc.ChallengeId
+                            where uc.UserId = @UserId";
 
                 var parameters = new
                 {

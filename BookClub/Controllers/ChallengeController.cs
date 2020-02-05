@@ -27,7 +27,6 @@ namespace BookClub.Controllers
             foreach (var userId in addChallengeCommand.userIds)
             {
                 repo.AddUserToChallenge(addChallengeCommand.creatorId, userId, newChallenge.Id);
-
             }
 
             return Ok();
@@ -40,10 +39,14 @@ namespace BookClub.Controllers
             return repo.GetChallengesByUser(userId);
         }
 
-        [HttpPost("{userId}/{challengeId}")]
-        public IActionResult AddUserToChallenge(int userId, int challengeId)
+       /* [HttpPost("{userId}/{challengeId}")]
+        public IActionResult AddUserToExistingChallenge(UpdateChallengeCommand updateChallengeCommand, int userId, int challengeId)
         {
-            throw new NotImplementedException();
-        }
+            var repo = new ChallengeRepository();
+            var updatedChallenge = new Challenge
+            {
+                
+            };
+        }*/
     }
 }

@@ -65,11 +65,11 @@ namespace BookClub.DataAccess
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sql = @"select * from [UserChallenge] where Id = @id";
+                var sql = @"select * from [UserChallenge] where UserId = @userid";
 
                 var parameters = new
                 {
-                    Id = userId
+                    UserId = userId
                 };
 
                 var challenges = db.Query<Challenge>(sql, parameters);

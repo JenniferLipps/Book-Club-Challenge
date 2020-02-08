@@ -80,36 +80,27 @@ namespace BookClub.DataAccess
             }
         }
 
-        public IEnumerable<ChallengeUserData> GetChallengesByUser(int userId)
+        public IEnumerable<int> GetChallengeIdsByUser(int userId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sql =
-                            //@"select c.Id, c.StartDate, c.EndDate
-                            //from Challenge c
-                            //join UserChallenge uc on c.Id = uc.ChallengeId
-                            //where uc.UserId = @UserId"
-                            //get affiliated users
-                            @"select u.Id as UserId, u.FirstName, u.LastName, b.Title, uc.ChallengeId, c.StartDate, c.EndDate
-                            from UserChallenge uc
-                            join [User] u on u.Id = uc.UserId
-                            join Book b on b.UserId = uc.UserId
-                            join Challenge c on c.Id = uc.ChallengeId
-                            where uc.UserId = @UserId"
-                            ;
+                var sql = @"
+                    select c.Id from Challenge as c
+                    join UserChallenge as uc on c.Id = uc.ChallengeId
+                    where uc.UserId = @UserId";
 
                 var parameters = new
                 {
                     UserId = userId
                 };
 
-                var userBooksForAllChallenge = db.Query<ChallengeUserData>(sql, parameters);
+                var userBooksForAllChallenge = db.Query<int>(sql, parameters);
 
                 return userBooksForAllChallenge;
             }
         }
 
-        public ChallegeDTO GetChallege(int challengeId)
+        public ChallengeDTO GetChallege(int challengeId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -165,7 +156,7 @@ namespace BookClub.DataAccess
 
                 var challengeData = allChallengeBooks.First();
 
-                var challengeDTO = new ChallegeDTO()
+                var challengeDTO = new ChallengeDTO()
                 {
                     ChalengeId = challengeData.ChallengeId,
                     StartDate = challengeData.StartDate,

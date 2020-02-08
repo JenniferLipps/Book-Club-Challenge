@@ -33,14 +33,22 @@ namespace BookClub.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public IEnumerable<ChallengeUserData> GetChallengesByUser(int userId)
+        public IEnumerable<ChallengeDTO> GetChallengesByUser(int userId)
         {
             var repo = new ChallengeRepository();
-            return repo.GetChallengesByUser(userId);
+            var challengeIds = repo.GetChallengeIdsByUser(userId);
+            var myChallenges = new List<ChallengeDTO>();
+            foreach (var challengeId in challengeIds)
+            {
+                var challenge = repo.GetChallege(challengeId);
+                myChallenges.Add(challenge);
+            }
+
+            return myChallenges;
         }
 
         [HttpGet("{challengeId}")]
-        public ChallegeDTO GetChallenge(int challengeId)
+        public ChallengeDTO GetChallenge(int challengeId)
         {
             var repo = new ChallengeRepository();
             return repo.GetChallege(challengeId);

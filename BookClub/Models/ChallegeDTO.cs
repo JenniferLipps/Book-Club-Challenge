@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Models
 {
-    public class ChallegeDTO
+    public class ChallengeDTO
     {
         public int ChalengeId { get; set; }
         public DateTime StartDate { get; set; }

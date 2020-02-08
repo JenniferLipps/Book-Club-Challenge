@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookClub.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/challenge")]
     [ApiController]
     public class ChallengeController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace BookClub.Controllers
             //create Challenge
             var repo = new ChallengeRepository();
             var startDate = DateTime.Now;
-            var endDate = DateTime.Now;
+            var endDate = DateTime.Now.AddMonths(1);
             var newChallenge = repo.AddChallenge(startDate, endDate);
 
             //add users to Challenge
@@ -32,11 +32,18 @@ namespace BookClub.Controllers
             return Ok();
         }
 
-        [HttpGet("{userId}")]
-        public IEnumerable<Challenge> GetChallengesByUser(int userId)
+        [HttpGet("user/{userId}")]
+        public IEnumerable<ChallengeUserData> GetChallengesByUser(int userId)
         {
             var repo = new ChallengeRepository();
             return repo.GetChallengesByUser(userId);
+        }
+
+        [HttpGet("{challengeId}")]
+        public ChallegeDTO GetChallenge(int challengeId)
+        {
+            var repo = new ChallengeRepository();
+            return repo.GetChallege(challengeId);
         }
 
        /* [HttpPost("{userId}/{challengeId}")]

@@ -16,6 +16,20 @@ namespace BookClub.DataAccess
         {
             using (var db = new SqlConnection(_connectionString))
             {
+                var sql = @"select b.Title, br.Review, br.UserId, u.FirstName
+                            from BookReview br
+                            join Book b on b.GoodReadsBookId = br.GoodReadsBookId
+                            join [User] u on u.Id = br.UserId
+                            where b.GoodReadsBookId = @GoodReadsBookId";
+
+                var parameters = new
+                {
+                    GoodReadsBookId = GoodReadsBookId
+                };
+
+                var allReviews = db.Query<BookReview>(sql, parameters);
+
+                return allReviews;
 
             }
         }

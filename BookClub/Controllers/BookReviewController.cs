@@ -13,11 +13,11 @@ namespace BookClub.Controllers
     [ApiController]
     public class BookReviewController : ControllerBase
     {
-        [HttpGet("{GoodReadsBookId}")]
-        public IEnumerable<BookReview> GetAllReviewsByBook (int GoodReadsBookId)
+        [HttpGet("{goodReadsBookId}")]
+        public IEnumerable<BookReview> GetAllReviewsByBook (int goodReadsBookId)
         {
             var repo = new BookReviewRepository();
-            return repo.GetAllReviewsByBook(GoodReadsBookId);
+            return repo.GetAllReviewsByBook(goodReadsBookId);
         }
 
         [HttpGet("{UserId}")]

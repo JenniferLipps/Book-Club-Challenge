@@ -158,7 +158,7 @@ namespace BookClub.DataAccess
 
                 var challengeDTO = new ChallengeDTO()
                 {
-                    ChalengeId = challengeData.ChallengeId,
+                    ChallengeId = challengeData.ChallengeId,
                     StartDate = challengeData.StartDate,
                     EndDate = challengeData.EndDate,
                     UsersInChallenge = listOfUsers

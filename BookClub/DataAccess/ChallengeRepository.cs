@@ -12,23 +12,27 @@ namespace BookClub.DataAccess
     {
         string _connectionString = "Server=localhost; Database=BookClubChallenge; Trusted_Connection=True;";
 
-        public Challenge AddChallenge(DateTime startDate, DateTime endDate)
+        public Challenge AddChallenge(DateTime startDate, DateTime endDate, int creatorId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
                 var sql = @"insert into [dbo].[Challenge]
 	                        ([StartDate]
 	                        ,[EndDate]
+                           ,[CreatorId]
 	                        )
                             output inserted.*
                             values (
                             @startDate
-                            ,@endDate)";
+                            ,@endDate
+                            ,@CreatorId)"
+                            ;
 
                 var parameters = new
                 {
                     StartDate = startDate,
-                    EndDate = endDate
+                    EndDate = endDate,
+                    CreatorId = creatorId
                 };
 
                 var newChallenge = db.QueryFirst<Challenge>(sql, parameters);
@@ -37,7 +41,9 @@ namespace BookClub.DataAccess
             }
         }
 
-        internal void AddUserToChallenge(int creatorId, int userId, int challengeId)
+        
+
+        internal void AddUserToChallenge(int challengeId, int userId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -45,30 +51,8 @@ namespace BookClub.DataAccess
                             ([ChallengeId]
                             ,[UserId])
                             values
-                            (@challengeId
-                            ,@userId)";
-
-                var parameters = new
-                {
-                    ChallengeId = challengeId,
-                    UserId = userId
-                };
-
-
-                db.Execute(sql, parameters);
-            }
-        }
-
-        internal void AddUserToExistingChallenge(int challengeId, int userId)
-        {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                var sql = @"insert into [dbo].[UserChallenge]
-                            ([ChallengeId]
-                            ,[UserId])
-                            values
-                            (@challengeId
-                            ,@userId)";
+                            (@ChallengeId
+                            ,@UserId)";
 
                 var parameters = new
                 {
@@ -80,25 +64,92 @@ namespace BookClub.DataAccess
             }
         }
 
-        public IEnumerable<Challenge> GetChallengesByUser(int userId)
+        public IEnumerable<int> GetChallengeIdsByUser(int userId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
-                var sql = @"select c.Id, c.StartDate, c.EndDate
-                            from Challenge c
-                            join UserChallenge uc on c.Id = uc.ChallengeId
-                            where uc.UserId = @UserId";
+                var sql = @"
+                    select c.Id from Challenge as c
+                    join UserChallenge as uc on c.Id = uc.ChallengeId
+                    where uc.UserId = @UserId";
 
                 var parameters = new
                 {
                     UserId = userId
                 };
 
-                var challenges = db.Query<Challenge>(sql, parameters);
+                var userBooksForAllChallenge = db.Query<int>(sql, parameters);
 
-                return challenges;
+                return userBooksForAllChallenge;
             }
         }
 
+        public ChallengeDTO GetChallege(int challengeId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sql = @"select u.Id as UserId, u.FirstName, u.LastName, b.Title, uc.ChallengeId, c.StartDate, c.EndDate
+                                from UserChallenge uc
+                                join [User] u on u.Id = uc.UserId
+                                join Book b on b.UserId = uc.UserId
+                                join Challenge c on c.Id = uc.ChallengeId
+                                where uc.ChallengeId = @ChallengeId;";
+
+                var parameters = new
+                {
+                    ChallengeId = challengeId
+                };
+
+                var allChallengeBooks = db.Query<ChallengeUserData>(sql, parameters);
+
+                var listOfUsers = new List<UserChallengeDTO>();
+
+                foreach (var challengeBook in allChallengeBooks)
+                {
+                    var userChallenge = listOfUsers.Where(u => u.UserId == challengeBook.UserId).SingleOrDefault();
+
+                    if (userChallenge == null)
+                    {
+                        listOfUsers.Add(new UserChallengeDTO
+                        {
+                            UserId = challengeBook.UserId,
+                            FirstName = challengeBook.FirstName,
+                            LastName = challengeBook.LastName,
+                            BooksCompleted = 1
+                        });
+                        continue;
+                    }
+
+                    userChallenge.BooksCompleted += 1;
+
+                    //if (listOfUsers.Any(user => user.UserId == challengeBook.UserId))
+                    //{
+                    //    var userChallenge = listOfUsers.Where(u => u.UserId == challengeBook.UserId).SingleOrDefault();
+                    //    userChallenge.BooksCompleted += 1;
+                    //} else
+                    //{
+                    //    listOfUsers.Add(new UserChallengeDTO
+                    //    {
+                    //        UserId = challengeBook.UserId,
+                    //        FirstName = challengeBook.FirstName,
+                    //        LastName = challengeBook.LastName,
+                    //        BooksCompleted = 1
+                    //    });
+                    //}
+                }
+
+                var challengeData = allChallengeBooks.First();
+
+                var challengeDTO = new ChallengeDTO()
+                {
+                    ChallengeId = challengeData.ChallengeId,
+                    StartDate = challengeData.StartDate,
+                    EndDate = challengeData.EndDate,
+                    UsersInChallenge = listOfUsers
+                };
+
+                return challengeDTO;
+            }
+        }
     }
 }

@@ -21,13 +21,21 @@ namespace BookClub.Controllers
             var repo = new ChallengeRepository();
             var startDate = DateTime.Now;
             var endDate = DateTime.Now.AddMonths(1);
-            var newChallenge = repo.AddChallenge(startDate, endDate);
+            var newChallenge = repo.AddChallenge(startDate, endDate, addChallengeCommand.creatorId);
+
+            var usersToAdd = addChallengeCommand.userIds.Distinct().ToList();
+
+            if (!usersToAdd.Contains(addChallengeCommand.creatorId))
+            {
+                usersToAdd.Add(addChallengeCommand.creatorId);
+            } 
 
             //add users to Challenge
-            foreach (var userId in addChallengeCommand.userIds)
+            foreach (var userId in usersToAdd)
             {
-                repo.AddUserToChallenge(addChallengeCommand.creatorId, userId, newChallenge.Id);
+                repo.AddUserToChallenge(newChallenge.Id, userId);
             }
+
 
             return Ok();
         }
@@ -54,14 +62,15 @@ namespace BookClub.Controllers
             return repo.GetChallege(challengeId);
         }
 
-       /* [HttpPost("{userId}/{challengeId}")]
-        public IActionResult AddUserToExistingChallenge(UpdateChallengeCommand updateChallengeCommand, int userId, int challengeId)
+       /*[HttpPost("{challengeId}")]
+        public IActionResult AddUserToExistingChallenge(UpdateChallengeCommand updateChallengeCommand, int challengeId)
         {
+
             var repo = new ChallengeRepository();
-            var updatedChallenge = new Challenge
+            foreach (var userId in updateChallengeCommand.userIds)
             {
-                
-            };
+                repo.AddUserToChallenge(challengeId, userId);
+            }
         }*/
     }
 }

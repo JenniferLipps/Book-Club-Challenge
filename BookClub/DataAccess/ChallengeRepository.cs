@@ -12,23 +12,27 @@ namespace BookClub.DataAccess
     {
         string _connectionString = "Server=localhost; Database=BookClubChallenge; Trusted_Connection=True;";
 
-        public Challenge AddChallenge(DateTime startDate, DateTime endDate)
+        public Challenge AddChallenge(DateTime startDate, DateTime endDate, int creatorId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
                 var sql = @"insert into [dbo].[Challenge]
 	                        ([StartDate]
 	                        ,[EndDate]
+                           ,[CreatorId]
 	                        )
                             output inserted.*
                             values (
                             @startDate
-                            ,@endDate)";
+                            ,@endDate
+                            ,@CreatorId)"
+                            ;
 
                 var parameters = new
                 {
                     StartDate = startDate,
-                    EndDate = endDate
+                    EndDate = endDate,
+                    CreatorId = creatorId
                 };
 
                 var newChallenge = db.QueryFirst<Challenge>(sql, parameters);
@@ -37,7 +41,9 @@ namespace BookClub.DataAccess
             }
         }
 
-        internal void AddUserToChallenge(int creatorId, int userId, int challengeId)
+        
+
+        internal void AddUserToChallenge(int challengeId, int userId)
         {
             using (var db = new SqlConnection(_connectionString))
             {
@@ -45,30 +51,8 @@ namespace BookClub.DataAccess
                             ([ChallengeId]
                             ,[UserId])
                             values
-                            (@challengeId
-                            ,@userId)";
-
-                var parameters = new
-                {
-                    ChallengeId = challengeId,
-                    UserId = userId
-                };
-
-
-                db.Execute(sql, parameters);
-            }
-        }
-
-        internal void AddUserToExistingChallenge(int challengeId, int userId)
-        {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                var sql = @"insert into [dbo].[UserChallenge]
-                            ([ChallengeId]
-                            ,[UserId])
-                            values
-                            (@challengeId
-                            ,@userId)";
+                            (@ChallengeId
+                            ,@UserId)";
 
                 var parameters = new
                 {

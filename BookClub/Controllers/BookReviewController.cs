@@ -13,18 +13,26 @@ namespace BookClub.Controllers
     [ApiController]
     public class BookReviewController : ControllerBase
     {
-        [HttpGet("{goodReadsBookId}")]
-        public IEnumerable<BookReview> GetAllReviewsByBook (int goodReadsBookId)
+        [HttpGet("book/{goodReadsBookId}")]
+        public IEnumerable<BookReviewDTO> GetAllReviewsByBook (int goodReadsBookId)
         {
             var repo = new BookReviewRepository();
             return repo.GetAllReviewsByBook(goodReadsBookId);
         }
 
-        [HttpGet("{UserId}")]
-        public IEnumerable<BookReview> GetAllReviewsByUser (int UserId)
+        [HttpGet("user/{UserId}")]
+        public IEnumerable<BookReviewDTO> GetAllReviewsByUser (int UserId)
         {
             var repo = new BookReviewRepository();
             return repo.GetAllReviewsByUser(UserId);
         }
+
+        [HttpGet("review/{UserId}/{BookId}")]
+        public BookReviewDTO GetUserReviewForBook (int UserId, int BookId)
+        {
+            var repo = new BookReviewRepository();
+            return repo.GetUserReviewForBook(UserId, BookId);
+        }
+
     }
 }

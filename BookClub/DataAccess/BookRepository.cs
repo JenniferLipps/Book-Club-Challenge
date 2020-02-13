@@ -31,6 +31,23 @@ namespace BookClub.DataAccess
             }
         }
 
+        public Book GetSingleBook(int bookId)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sql = @"select *
+                            from [Book]
+                            where Id = @BookId";
+                var parameters = new
+                {
+                    BookId = bookId
+                };
+                var book = db.QueryFirst<Book>(sql, parameters);
+
+                return book;
+            }
+        }
+
         public Book AddBook(AddBookCommand newBook)
         {
             using (var db = new SqlConnection(_connectionString))

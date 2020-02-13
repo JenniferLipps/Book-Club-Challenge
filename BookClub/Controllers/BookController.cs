@@ -14,11 +14,18 @@ namespace BookClub.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        [HttpGet("{userId}")]
+        [HttpGet("user/{userId}")]
         public IEnumerable<Book> GetBooks(int userId)
         {
             var repo = new BookRepository();
             return repo.GetAllBooks(userId);
+        }
+
+        [HttpGet("{bookId}")]
+        public Book GetSingleBook(int bookId)
+        {
+            var repo = new BookRepository();
+            return repo.GetSingleBook(bookId);
         }
 
         [HttpPost]

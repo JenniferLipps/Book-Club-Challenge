@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookClub.Models;
 using BookClub.DataAccess;
+using BookClub.Commands;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,8 +32,20 @@ namespace BookClub.Controllers
         public BookReviewDTO GetUserReviewForBook (int UserId, int BookId)
         {
             var repo = new BookReviewRepository();
+            var retrievedBookReview = repo.GetUserReviewForBook(UserId, BookId);
             return repo.GetUserReviewForBook(UserId, BookId);
         }
 
+        [HttpPost]
+        public IActionResult AddBookReview (AddBookReviewCommand newReview)
+        {
+            var repo = new BookReviewRepository();
+            var bookReviewAdded = repo.AddBookReview(newReview);
+            if (bookReviewAdded != null)
+            {
+                return Ok(newReview);
+            }
+            return BadRequest($"Unable to add review.");
+        }
     }
 }

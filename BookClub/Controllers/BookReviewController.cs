@@ -32,6 +32,7 @@ namespace BookClub.Controllers
         public BookReviewDTO GetUserReviewForBook (int UserId, int BookId)
         {
             var repo = new BookReviewRepository();
+            var retrievedBookReview = repo.GetUserReviewForBook(UserId, BookId);
             return repo.GetUserReviewForBook(UserId, BookId);
         }
 

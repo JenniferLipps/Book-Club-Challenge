@@ -1,4 +1,5 @@
 ﻿using BookClub.Models;
+using BookClub.Commands;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -75,6 +76,28 @@ namespace BookClub.DataAccess
                 var userReviewForSingleBook = db.QueryFirst<BookReviewDTO>(sql, parameters);
 
                 return userReviewForSingleBook;
+            }
+        }
+
+        public BookReview AddBookReview(AddBookReviewCommand newReview)
+        {
+            using (var db = new SqlConnection(_connectionString))
+            {
+                var sql = @"insert into [dbo].[BookReview]
+	                        ([Review]
+	                        ,[Rating]
+	                        ,[BookId]
+	                        ,[UserId]
+	                        ,[GoodReadsBookId])
+                            output inserted.*
+                            values (
+                            @Review
+                            ,@Rating
+                            ,@BookId
+                            ,@UserId
+                            ,GoodReadsBookId)";
+
+                return db.QueryFirst<BookReview>(sql, newReview);
             }
         }
     }

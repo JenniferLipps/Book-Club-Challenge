@@ -29,11 +29,16 @@ namespace BookClub.Controllers
         }
 
         [HttpGet("review/{UserId}/{BookId}")]
-        public BookReviewDTO GetUserReviewForBook (int UserId, int BookId)
+        public IActionResult GetUserReviewForBook (int UserId, int BookId)
         {
             var repo = new BookReviewRepository();
             var retrievedBookReview = repo.GetUserReviewForBook(UserId, BookId);
-            return repo.GetUserReviewForBook(UserId, BookId);
+            if (retrievedBookReview != null)
+            {
+                return Ok(repo.GetUserReviewForBook(UserId, BookId));
+            }
+            return NoContent();
+            
         }
 
         [HttpPost]

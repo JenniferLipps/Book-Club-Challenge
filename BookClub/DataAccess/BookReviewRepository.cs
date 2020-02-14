@@ -73,7 +73,7 @@ namespace BookClub.DataAccess
                     bookId = BookId
                 };
 
-                var userReviewForSingleBook = db.QueryFirst<BookReviewDTO>(sql, parameters);
+                var userReviewForSingleBook = db.QueryFirstOrDefault<BookReviewDTO>(sql, parameters);
 
                 return userReviewForSingleBook;
             }
@@ -95,7 +95,7 @@ namespace BookClub.DataAccess
                             ,@Rating
                             ,@BookId
                             ,@UserId
-                            ,GoodReadsBookId)";
+                            ,@GoodReadsBookId)";
 
                 return db.QueryFirst<BookReview>(sql, newReview);
             }
